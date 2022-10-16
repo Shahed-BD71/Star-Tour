@@ -1,7 +1,8 @@
 const Tour = require("../models/Tour");
 
-exports.addTourService = async (tourData) => {
-  const tour = new Tour(tourData);
+exports.addTourService = async (data) => {
+  const tour = await new Tour(data);
+  console.log(tour)
   tour.save();
 };
 

@@ -9,8 +9,8 @@ const tourSchema = Schema(
       type: String,
       required: [true, "Please provide a Tour name"],
       trim: true,
-      unique: true,
       index: true,
+      unique: true,
       minLength: [3, "Name must be at least Three Character"],
       maxLength: [10, "Name is too Large"],
     },
@@ -23,6 +23,10 @@ const tourSchema = Schema(
       required: true,
       index: true,
       min: [100, "Price can not be Negative"],
+    },
+    img: 
+    { type: String,
+      required: true,
     },
     allowance: {
       type: String,
@@ -73,10 +77,6 @@ const tourSchema = Schema(
         values: ["active", "inactive", "discontinued"],
         message: "status can not be {VALUE}",
       },
-    },
-    img: {
-     data: Buffer,
-     contentType: String,
     },
     // categories: [
     //   {

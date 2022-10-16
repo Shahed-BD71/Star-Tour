@@ -1,59 +1,37 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+var bodyParser = require("body-parser");
 // let ejs = require("ejs");
 const errorHandler = require("./middleware/errorHandler.js");
-const mongoose = require("mongoose");
-const fs = require("fs");
-const multer = require("multer");
+const path = require("path");
+
 const tourRoutes = require("./routes/v1/tour.route.js");
-const Tour = require("./models/Tour");
+
 
 // middleware
 app.use(express.json());
 app.use(cors());
-// app.use(express.static("public"))
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(express.static("public"))
 // app.use(express.static("views"));
 // app.set("view engine", ejs);
 app.use(errorHandler);
 
 // Routes
 app.use("/api/v1/tour", tourRoutes);
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/public/index.html");
-});
+// server build
+// if (process.env?.NODE_ENV === "production") {
+//   app.use(express.static("client/dist"));
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
+//   });
+// }
 
-// will clear later..........
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-const upload = multer({ storage: storage });
-
-app.post("/upload", upload.single("testImg"), (req, res) => {
-  const saveImage = Tour(
-    { ...req.body },
-    {
-      image: {
-        data: fs.readFileSync("uploads/" + req.file.filename),
-        contentType: "image/jpeg",
-      },
-    }
-  );
-  saveImage
-    .save()
-    .then((res) => {
-      console.log("image is saved");
-    })
-    .catch((err) => {
-      console.log(err, "error has occur");
-    });
-  res.send(req.file);
+app.use(express.static("client"));
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
 });
 
 app.all("*", (req, res, next) => {

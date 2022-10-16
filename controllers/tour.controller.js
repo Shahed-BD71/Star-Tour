@@ -1,29 +1,13 @@
 const Service = require("../services/tour.services");
 var fs = require("fs");
 
-exports.fileUpload = async (req, res, next) => {
-  try {
-    res.status(200).json({
-      status: "success",
-      message: "file uploaded Successfully",
-    });
-  } catch (error) {
-    console.log(error),
-      res.status(400).json({
-        status: "fail",
-        error: error.message,
-      });
-  }
-  next();
-};
-
 exports.addTour = (req, res, next) => {
+  let imgPath =  (req.file.path.slice(7));
+  console.log(imgPath)
+  const requestBody = {...req.body, img: imgPath}
+  console.log(requestBody)
   try {
-    fs.readFile(req.file.path, function (err, data) {
-      var base64data = Buffer.from(data).toString("base64");
-      const tourData = { ...req?.body, img: base64data };
-      Service.addTourService(tourData);
-    });
+    Service.addTourService(requestBody);
     res.status(200).json({
       status: "success",
       message: "Tour Saved Successfully",
